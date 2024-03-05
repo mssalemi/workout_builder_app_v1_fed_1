@@ -62,8 +62,6 @@ const FIND_WORKOUT_QUERY = `
 function WorkoutPage() {
   const { id } = useParams();
   const [workout, setWorkout] = useState<Workout | null>(null);
-
-  console.log("id", id);
   useEffect(() => {
     const fetchWorkout = async () => {
       try {
