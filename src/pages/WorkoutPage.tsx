@@ -6,9 +6,35 @@ import axios from "axios";
 import { Workout } from "../types/types";
 import { WorkoutDisplay } from "../components/WorkoutDisplay";
 
+// const FIND_WORKOUT_QUERY = `
+//   query FindWorkout {
+//     findWorkout(workoutId: 35) {
+//       title
+//       id
+//       userId
+//       exercises {
+//         completed
+//         order
+//         performanceData {
+//           reps
+//           weight
+//           sets
+//         }
+//         exercise {
+//           id
+//           title
+//           description
+//           bodyPartMain
+//         }
+//         exerciseHistoryId
+//       }
+//     }
+//   }
+// `;
+
 const FIND_WORKOUT_QUERY = `
-  query FindWorkout {
-    findWorkout(workoutId: 35) {
+  query FindWorkout($workoutId: ID!) {
+    findWorkout(workoutId: $workoutId) {
       title
       id
       userId
@@ -31,6 +57,7 @@ const FIND_WORKOUT_QUERY = `
     }
   }
 `;
+
 function WorkoutPage() {
   const { id } = useParams();
   const [workout, setWorkout] = useState<Workout | null>(null);
@@ -41,17 +68,20 @@ function WorkoutPage() {
       try {
         const response = await axios.post(
           "http://localhost:3000/graphql",
-          { query: FIND_WORKOUT_QUERY },
+          {
+            query: FIND_WORKOUT_QUERY,
+            variables: {
+              workoutId: id,
+            },
+          },
           { headers: { "Content-Type": "application/json" } }
         );
-        console.log(response);
         const {
           data: {
             data: { findWorkout },
           },
         } = response;
 
-        console.log(findWorkout);
         setWorkout(findWorkout);
       } catch (error) {
         console.log(error);
@@ -59,7 +89,7 @@ function WorkoutPage() {
     };
 
     fetchWorkout();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     console.log("[WORKOUT]: ", workout);
