@@ -90,15 +90,12 @@ function WorkoutPage() {
     fetchWorkout();
   }, [id]);
 
-  useEffect(() => {
-    console.log("[WORKOUT]: ", workout);
-  }, [workout]);
-
   return (
     <div className="App">
       <header className="App-header">
-        {workout && <WorkoutDisplay workout={workout} />}
-        {!workout && (
+        {workout ? (
+          <WorkoutDisplay workout={workout} />
+        ) : (
           <Result
             status="404"
             title="404"
