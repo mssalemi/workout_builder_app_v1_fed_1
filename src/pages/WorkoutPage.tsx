@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import axios from "axios";
+import { Result } from "antd";
 
 import { Workout } from "../types/types";
 import { WorkoutDisplay } from "../components/WorkoutDisplay";
@@ -99,7 +100,14 @@ function WorkoutPage() {
     <div className="App">
       <header className="App-header">
         {workout && <WorkoutDisplay workout={workout} />}
-        {!workout && <p>Loading...</p>}
+        {!workout && (
+          <Result
+            status="404"
+            title="404"
+            subTitle="Sorry, the page you visited does not exist."
+            // extra={<Button type="primary">Back Home</Button>}
+          />
+        )}
       </header>
     </div>
   );
