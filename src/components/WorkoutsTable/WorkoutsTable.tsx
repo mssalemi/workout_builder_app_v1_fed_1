@@ -2,63 +2,46 @@ import React from "react";
 
 import { Table, Tag, Space } from "antd";
 
+import { Workout } from "../../types/types";
+
 const columns = [
   {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "Tags",
-    key: "tags",
-    dataIndex: "tags",
+    title: "Title",
+    dataIndex: "title",
+    key: "title",
   },
   {
     title: "Action",
     key: "action",
+    dataIndex: "action",
   },
 ];
 
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
+interface Props {
+  workouts: Workout[];
+}
 
-function WorkoutsTable() {
+function WorkoutsTable({ workouts }: Props) {
   // this needs endpoint to access all workouts
+  const data = workouts.map((workout, index) => {
+    return {
+      key: index,
+      title: workout.title,
+      action: (
+        <Space size="middle">
+          <a href={`/${workout.id}`}>View</a>
+        </Space>
+      ),
+    };
+  });
   return (
     <div>
       {" "}
-      <Table columns={columns} dataSource={data} />
+      {workouts.length ? (
+        <Table columns={columns} dataSource={data} />
+      ) : (
+        <h1>No Workouts</h1>
+      )}
     </div>
   );
 }

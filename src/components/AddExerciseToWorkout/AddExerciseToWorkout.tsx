@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 
 import { Select, InputNumber, Button } from "antd";
+
+import { ExerciseDetails } from "../../types/types";
 interface Props {
   workoutId: number;
   userId: number;
@@ -27,7 +29,7 @@ const ADD_EXERCISE_TO_WORKOUT_MUTATION = `
 `;
 
 export function AddExerciseToWorkout({ workoutId, userId }: Props) {
-  const [exercises, setExercises] = useState([]);
+  const [exercises, setExercises] = useState<ExerciseDetails[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [reps, setReps] = useState(0);
@@ -85,14 +87,21 @@ export function AddExerciseToWorkout({ workoutId, userId }: Props) {
           },
           { headers: { "Content-Type": "application/json" } }
         );
-        console.log(response.data);
+        // console.log(response.data);
         // Handle success (e.g., show a success message or update UI)
       } catch (error) {
-        console.error(error);
+        // console.error(error);
         // Handle error (e.g., show an error message)
       }
     }
   };
+
+  const options = useMemo(() => {
+    return exercises.map((exercise: any) => ({
+      id: exercise.id,
+      value: exercise.title,
+    }));
+  }, [exercises]);
 
   return (
     <div>
@@ -105,14 +114,14 @@ export function AddExerciseToWorkout({ workoutId, userId }: Props) {
             <Select
               style={{ width: 120 }}
               loading={loading}
-              options={exercises.map((exercise: any) => ({
-                id: exercise.id,
-                value: exercise.title,
-              }))}
-              onChange={({ value, id }) => {
+              options={options}
+              onChange={(value) => {
+                const exercise = exercises.find(
+                  (exercise: any) => exercise.title === value
+                );
                 setExercise({
-                  exerciseId: 1,
-                  value,
+                  exerciseId: exercise?.id || 0,
+                  value: value,
                 });
               }}
             />

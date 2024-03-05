@@ -32,7 +32,7 @@ const FIND_WORKOUTS_BY_USER_QUERY = `
 
 function HomePage() {
   const userId = 1;
-  const [workouts, setWorkouts] = useState<Workout[] | null>(null);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
 
   console.log(workouts);
   useEffect(() => {
@@ -65,7 +65,7 @@ function HomePage() {
 
   return (
     <div>
-      <WorkoutsTable />
+      <WorkoutsTable workouts={workouts} />
     </div>
   );
 }
