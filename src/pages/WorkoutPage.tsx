@@ -80,7 +80,7 @@ function WorkoutPage() {
             data: { findWorkout },
           },
         } = response;
-
+        console.log("findWorkout: ", findWorkout);
         setWorkout(findWorkout);
       } catch (error) {
         console.log(error);

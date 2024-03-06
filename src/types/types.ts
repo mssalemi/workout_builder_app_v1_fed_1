@@ -24,4 +24,5 @@ export interface ExerciseDetails {
   title?: string;
   description?: string;
   bodyPartMain?: string;
+  exerciseHistoryId?: number;
 }
