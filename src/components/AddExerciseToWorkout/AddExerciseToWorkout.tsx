@@ -7,6 +7,7 @@ import { ExerciseDetails } from "../../types/types";
 interface Props {
   workoutId: number;
   userId: number;
+  onOk: () => void;
 }
 
 const GET_EXERCISE_QUERY = `
@@ -28,7 +29,7 @@ const ADD_EXERCISE_TO_WORKOUT_MUTATION = `
   }
 `;
 
-export function AddExerciseToWorkout({ workoutId, userId }: Props) {
+export function AddExerciseToWorkout({ workoutId, userId, onOk }: Props) {
   const [exercises, setExercises] = useState<ExerciseDetails[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -56,6 +57,7 @@ export function AddExerciseToWorkout({ workoutId, userId }: Props) {
             data: { exercises },
           },
         } = response;
+        onOk();
         // console.log(exercises);
         setExercises(exercises);
       } catch (error) {
@@ -84,6 +86,7 @@ export function AddExerciseToWorkout({ workoutId, userId }: Props) {
           { headers: { "Content-Type": "application/json" } }
         );
         // console.log(response.data);
+        onOk();
         // Handle success (e.g., show a success message or update UI)
       } catch (error) {
         // console.error(error);

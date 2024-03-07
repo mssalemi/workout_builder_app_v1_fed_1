@@ -28,6 +28,7 @@ const FIND_WORKOUT_QUERY = `
           description
           bodyPartMain
         }
+        
         exerciseHistoryId
       }
     }

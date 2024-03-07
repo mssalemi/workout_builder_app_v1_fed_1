@@ -1,25 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import axios from "axios";
 import { Workout } from "../../types/types";
 import { AddExerciseToWorkout } from "../AddExerciseToWorkout";
 import { InfoCircleTwoTone, PlusOutlined } from "@ant-design/icons";
 import {
   Col,
   Row,
-  Avatar,
+  Tag,
   Typography,
   Flex,
-  Button,
+  FloatButton,
   Modal,
   Tooltip,
   Table,
+  Badge,
+  Space,
+  Button,
 } from "antd";
 import { WorkoutExerciseEditor } from "../WorkoutExerciseEditor/WorkoutExerciseEditor";
 
-const { Text } = Typography;
+const { Title, Text } = Typography;
 
 interface Props {
   workout: Workout;
 }
+
+const COMPLETE_WORKOUT_MUTATION = `
+  mutation CompleteWorkout($input: CompleteWorkoutInput!) {
+    completeWorkout(input: $input) {
+      id
+    }
+  }
+`;
+
+const style: React.CSSProperties = { padding: "8px 0" };
 
 export function WorkoutDisplay({ workout }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,11 +43,34 @@ export function WorkoutDisplay({ workout }: Props) {
   };
 
   const handleOk = () => {
+    console.log("called");
     setIsModalOpen(false);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+
+  const completeWorkout = async (workoutId: number) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/graphql",
+        {
+          query: COMPLETE_WORKOUT_MUTATION,
+          variables: {
+            input: {
+              workoutId, // Assuming 'workoutId' is the correct field name inside the input object
+            },
+          },
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      // console.log("Workout completed successfully", response.data);
+      // Update UI or state as needed
+    } catch (error) {
+      console.error("Error completing workout", error);
+      // Handle error, possibly show a message to the user
+    }
   };
 
   const exercisesData = workout?.exercises?.map((exercise) => {
@@ -87,48 +124,71 @@ export function WorkoutDisplay({ workout }: Props) {
       dataIndex: "stats",
       key: "stats",
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (text: any, record: any) => (
-        <Button icon={<PlusOutlined />} type="primary" onClick={showModal}>
-          Add Exercise
-        </Button>
-      ),
-    },
   ];
+
+  const completed = useMemo(() => {
+    return (
+      workout?.exercises &&
+      workout?.exercises?.filter((exercise) => {
+        return exercise.completed;
+      }).length === workout.exercises.length
+    );
+  }, [workout?.exercises]);
 
   return (
     <div>
       <Modal
         title="Basic Modal"
         open={isModalOpen}
+        okButtonProps={{
+          disabled: true,
+          loading: true,
+        }}
+        okText="Adding Exercise"
         onOk={handleOk}
         onCancel={handleCancel}
+        cancelText="Cancel"
       >
         {workout && (
           <AddExerciseToWorkout
             workoutId={workout.id!}
             userId={workout.userId!}
+            onOk={handleOk}
           />
         )}
       </Modal>
       <>
-        <Row>
+        <Row gutter={[8, 8]}>
           <Col span={24}>
-            <Avatar
-              shape="square"
-              style={{
-                backgroundColor: "#fde3cf",
-                color: "#f56a00",
-              }}
-            >
-              {workout.userId}
-            </Avatar>
-            <Text keyboard>{workout.title}</Text>
+            <Title level={3} keyboard>
+              {workout.title} -{" "}
+            </Title>
+            <Text>
+              {completed && <Tag color="green">Completed</Tag>}
+              {!completed && <Badge status="processing" text="In Progress" />}
+            </Text>
+            {!completed && (
+              <Button
+                type="primary"
+                onClick={() => completeWorkout(workout?.id || 0)}
+              >
+                Complete Workout
+              </Button>
+            )}
           </Col>
           <Col span={24}>
-            <Table dataSource={exercisesData} columns={columns} />
+            <Table
+              pagination={false}
+              dataSource={exercisesData}
+              columns={columns}
+            />
+            <FloatButton
+              icon={<PlusOutlined />}
+              type="primary"
+              onClick={showModal}
+            >
+              Add Exercise
+            </FloatButton>
           </Col>
         </Row>
       </>
