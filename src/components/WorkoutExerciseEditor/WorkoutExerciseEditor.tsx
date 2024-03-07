@@ -1,24 +1,11 @@
 import React, { useState } from "react";
 import {
-  EditFilled,
   CloseSquareFilled,
   CheckSquareFilled,
   LeftSquareFilled,
 } from "@ant-design/icons";
 
-import {
-  Input,
-  Typography,
-  Tag,
-  Divider,
-  Button,
-  Space,
-  Form,
-  Tooltip,
-  Spin,
-  Flex,
-} from "antd";
-const { Text } = Typography;
+import { Input, Button, Space, Form, Tooltip, Spin, Flex } from "antd";
 
 interface Props {
   sets: number;

@@ -83,7 +83,6 @@ export function WorkoutExerciseDisplay({
       // Refresh workout data or handle UI updates here
     } catch (error) {
       console.error("Error deleting exercise", error);
-      // Handle error, maybe show a message to the user
     }
   };
 
