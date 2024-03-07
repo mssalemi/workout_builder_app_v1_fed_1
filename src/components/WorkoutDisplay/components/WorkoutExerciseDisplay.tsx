@@ -56,7 +56,7 @@ export function WorkoutExerciseDisplay({
         },
         { headers: { "Content-Type": "application/json" } }
       );
-      console.log("Workout completed successfully", response.data);
+      // console.log("Workout completed successfully", response.data);
       // Update UI or state as needed
     } catch (error) {
       console.error("Error completing workout", error);
@@ -65,7 +65,7 @@ export function WorkoutExerciseDisplay({
   };
 
   const deleteExerciseFromWorkout = async (exerciseHistoryId: number) => {
-    console.log("Deleting exercise", exerciseHistoryId);
+    // console.log("Deleting exercise", exerciseHistoryId);
     try {
       const response = await axios.post(
         "http://localhost:3000/graphql",
@@ -79,7 +79,7 @@ export function WorkoutExerciseDisplay({
         },
         { headers: { "Content-Type": "application/json" } }
       );
-      console.log("Exercise deleted successfully", response.data);
+      // console.log("Exercise deleted successfully", response.data);
       // Refresh workout data or handle UI updates here
     } catch (error) {
       console.error("Error deleting exercise", error);

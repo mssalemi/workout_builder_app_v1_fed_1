@@ -42,10 +42,6 @@ export function AddExerciseToWorkout({ workoutId, userId }: Props) {
   } | null>();
 
   useEffect(() => {
-    console.log("exercise", exercise);
-  }, [exercise]);
-
-  useEffect(() => {
     const fetchExercises = async () => {
       try {
         setLoading(false);
@@ -54,13 +50,13 @@ export function AddExerciseToWorkout({ workoutId, userId }: Props) {
           { query: GET_EXERCISE_QUERY },
           { headers: { "Content-Type": "application/json" } }
         );
-        console.log(response);
+        // console.log(response);
         const {
           data: {
             data: { exercises },
           },
         } = response;
-        console.log(exercises);
+        // console.log(exercises);
         setExercises(exercises);
       } catch (error) {
         console.error(error);

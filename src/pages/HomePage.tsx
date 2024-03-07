@@ -33,6 +33,7 @@ const FIND_WORKOUTS_BY_USER_QUERY = `
 function HomePage() {
   const userId = 1;
   const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   console.log(workouts);
   useEffect(() => {
@@ -55,6 +56,7 @@ function HomePage() {
         } = response;
 
         setWorkouts(findWorkoutsByUser);
+        setLoading(false);
       } catch (error) {
         console.log(error);
       }

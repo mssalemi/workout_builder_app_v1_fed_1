@@ -3,6 +3,7 @@ import {
   EditFilled,
   CloseSquareFilled,
   CheckSquareFilled,
+  LeftSquareFilled,
 } from "@ant-design/icons";
 
 import {
@@ -14,6 +15,8 @@ import {
   Space,
   Form,
   Tooltip,
+  Spin,
+  Flex,
 } from "antd";
 const { Text } = Typography;
 
@@ -30,9 +33,9 @@ export function WorkoutExerciseEditor({
   exerciseHistoryId,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
-  // const [form] = Form.useForm();
+  const [editLoading, setEditLoading] = useState(false);
+  const [form] = Form.useForm();
   const onSubmit = (values: any) => {
-    console.log("Success:", values);
     const payload = {
       sets: parseInt(values.sets) || sets,
       reps: parseInt(values.reps) || reps,
@@ -46,62 +49,91 @@ export function WorkoutExerciseEditor({
   //   console.log("Failed:", errorInfo);
   // };
 
+  const cancelEdit = () => {
+    form.resetFields();
+    setIsEditing(false);
+  };
+
   return (
     <>
-      <Form onFinish={onSubmit} layout="vertical">
+      <Form form={form} onFinish={onSubmit} layout="vertical">
         <Space.Compact block size="small">
-          <Form.Item label="Sets" name="sets" style={{ width: "5rem" }}>
-            <Input
-              disabled={!isEditing}
-              style={{ width: "5rem" }}
-              defaultValue={sets}
-            />
-          </Form.Item>
-          <Form.Item label="Reps" name="reps" style={{ width: "5rem" }}>
-            <Input
-              disabled={!isEditing}
-              style={{ width: "5rem" }}
-              defaultValue={reps}
-            />
-          </Form.Item>
-          <Form.Item label="Weight" name="weight" style={{ width: "5rem" }}>
-            <Input disabled={!isEditing} defaultValue={weight} />
-          </Form.Item>
-          <Form.Item label="Action">
-            {isEditing ? (
-              <>
-                <Button
-                  icon={<CloseSquareFilled />}
-                  type="primary"
-                  htmlType="submit"
-                  onClick={() => setIsEditing(false)}
-                  danger
-                ></Button>
-                <Button
-                  icon={<CheckSquareFilled />}
-                  type="primary"
-                  htmlType="submit"
-                ></Button>
-              </>
-            ) : (
-              <>
-                <Tooltip title="edit performance data">
+          <Flex>
+            <Form.Item label="Sets" name="sets" style={{ width: "5rem" }}>
+              <Input
+                disabled={!isEditing}
+                style={{ width: "5rem" }}
+                defaultValue={sets}
+              />
+            </Form.Item>
+            <Form.Item label="Reps" name="reps" style={{ width: "5rem" }}>
+              <Input
+                disabled={!isEditing}
+                style={{ width: "5rem" }}
+                defaultValue={reps}
+              />
+            </Form.Item>
+            <Form.Item label="Weight" name="weight" style={{ width: "5rem" }}>
+              <Input disabled={!isEditing} defaultValue={weight} />
+            </Form.Item>
+
+            {isEditing && (
+              <Form.Item label=" " style={{ width: "1.5rem" }}>
+                <Tooltip title="Cancel">
+                  <Button
+                    icon={<CloseSquareFilled />}
+                    type="primary"
+                    onClick={cancelEdit}
+                    danger
+                    htmlType="reset"
+                    disabled={editLoading}
+                  ></Button>
+                </Tooltip>
+              </Form.Item>
+            )}
+
+            {isEditing && (
+              <Form.Item label=" " style={{ width: "1.5rem" }}>
+                {editLoading ? (
+                  <Flex gap="small">
+                    {" "}
+                    <Spin size="small"></Spin>
+                  </Flex>
+                ) : (
+                  <Tooltip title="Save">
+                    <Button
+                      icon={<CheckSquareFilled />}
+                      type="primary"
+                      htmlType="submit"
+                      onClick={() => {
+                        console.log("placeholder submit");
+                        form.submit();
+                        setEditLoading(true);
+                      }}
+                    ></Button>
+                  </Tooltip>
+                )}
+              </Form.Item>
+            )}
+            {!isEditing && (
+              <Form.Item label="  ">
+                <Tooltip title="Edit">
                   <Button
                     type="primary"
-                    shape="circle"
-                    icon={<EditFilled />}
+                    icon={<LeftSquareFilled />}
                     onClick={() => setIsEditing(true)}
                   />
                 </Tooltip>
-              </>
+              </Form.Item>
             )}
-          </Form.Item>
+          </Flex>
         </Space.Compact>
       </Form>
     </>
   );
 }
 
+// RIP - Old Form
 // <Form
 //   form={form}
 //   name="workout"

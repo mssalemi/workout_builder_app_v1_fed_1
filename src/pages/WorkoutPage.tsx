@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import "./styles/WorkoutPage.css";
 
 import axios from "axios";
-import { Result } from "antd";
+import { Result, Skeleton } from "antd";
 
 import { Workout } from "../types/types";
 import { WorkoutDisplay } from "../components/WorkoutDisplay";
@@ -37,6 +37,7 @@ const FIND_WORKOUT_QUERY = `
 function WorkoutPage() {
   const { id } = useParams();
   const [workout, setWorkout] = useState<Workout | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     const fetchWorkout = async () => {
       try {
@@ -59,11 +60,17 @@ function WorkoutPage() {
         setWorkout(findWorkout);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchWorkout();
   }, [id]);
+
+  if (loading) {
+    return <Skeleton avatar paragraph={{ rows: 6 }} />;
+  }
 
   return (
     <div className="App">

@@ -73,7 +73,7 @@ export function WorkoutDisplay({ workout }: Props) {
     };
   });
 
-  console.log("exerciseData", exercisesData);
+  // console.log("exerciseData", exercisesData);
 
   const columns = [
     {
@@ -118,7 +118,7 @@ export function WorkoutDisplay({ workout }: Props) {
     },
   ];
 
-  console.log("exercises", exercisesData);
+  // console.log("exercises", exercisesData);
 
   return (
     <div>
