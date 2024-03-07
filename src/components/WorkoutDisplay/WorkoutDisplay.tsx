@@ -128,7 +128,7 @@ export function WorkoutDisplay({ workout }: Props) {
 
   const completed = useMemo(() => {
     return (
-      workout?.exercises &&
+      workout?.exercises?.length &&
       workout?.exercises?.filter((exercise) => {
         return exercise.completed;
       }).length === workout.exercises.length
@@ -164,32 +164,36 @@ export function WorkoutDisplay({ workout }: Props) {
               {workout.title} -{" "}
             </Title>
             <Text>
-              {completed && <Tag color="green">Completed</Tag>}
               {!completed && <Badge status="processing" text="In Progress" />}
             </Text>
-            {!completed && (
-              <Button
-                type="primary"
-                onClick={() => completeWorkout(workout?.id || 0)}
-              >
-                Complete Workout
-              </Button>
-            )}
           </Col>
           <Col span={24}>
             <Table
               pagination={false}
               dataSource={exercisesData}
               columns={columns}
+              footer={() => (
+                <>
+                  {!completed && (
+                    <Button
+                      type="primary"
+                      onClick={() => completeWorkout(workout?.id || 0)}
+                    >
+                      Complete Workout
+                    </Button>
+                  )}
+                  {completed && <Tag color="green">Completed</Tag>}
+                </>
+              )}
             />
-            <FloatButton
-              icon={<PlusOutlined />}
-              type="primary"
-              onClick={showModal}
-            >
-              Add Exercise
-            </FloatButton>
           </Col>
+          <FloatButton
+            icon={<PlusOutlined />}
+            type="primary"
+            onClick={showModal}
+          >
+            Add Exercise
+          </FloatButton>
         </Row>
       </>
     </div>
