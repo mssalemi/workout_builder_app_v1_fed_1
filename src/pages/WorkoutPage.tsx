@@ -1,37 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import "./styles/WorkoutPage.css";
 
 import axios from "axios";
 import { Result } from "antd";
 
 import { Workout } from "../types/types";
 import { WorkoutDisplay } from "../components/WorkoutDisplay";
-
-// const FIND_WORKOUT_QUERY = `
-//   query FindWorkout {
-//     findWorkout(workoutId: 35) {
-//       title
-//       id
-//       userId
-//       exercises {
-//         completed
-//         order
-//         performanceData {
-//           reps
-//           weight
-//           sets
-//         }
-//         exercise {
-//           id
-//           title
-//           description
-//           bodyPartMain
-//         }
-//         exerciseHistoryId
-//       }
-//     }
-//   }
-// `;
 
 const FIND_WORKOUT_QUERY = `
   query FindWorkout($workoutId: ID!) {
