@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
 import { WorkoutExerciseEditor } from "../../WorkoutExerciseEditor/WorkoutExerciseEditor";
-import { Button, Tag } from "antd";
-
-import axios from "axios";
+import { Button, Tag, Row, Col, Typography } from "antd";
+const { Text } = Typography;
 
 interface Props {
   title: string;
@@ -41,6 +41,7 @@ export function WorkoutExerciseDisplay({
   exerciseHistoryId,
   workoutId,
 }: Props) {
+  const [isEditing, setIsEditing] = useState(false);
   const completeWorkout = async (workoutId: number) => {
     try {
       const response = await axios.post(
@@ -88,16 +89,25 @@ export function WorkoutExerciseDisplay({
 
   return (
     <div>
-      {title}
+      <Text strong>{title} </Text>
+      <Text>
+        {sets}x{reps} @ {weight} lbs
+      </Text>
+      <Text underline onClick={() => setIsEditing(!isEditing)}>
+        Edit
+      </Text>
+
       <Tag color={completed ? "green" : "red"}>
         {completed ? "Completed" : "Not Completed"}
       </Tag>
-      <WorkoutExerciseEditor
-        sets={sets || 0}
-        reps={reps || 0}
-        weight={weight || 0}
-        exerciseHistoryId={exerciseHistoryId || 0}
-      />
+      {isEditing && (
+        <WorkoutExerciseEditor
+          sets={sets || 0}
+          reps={reps || 0}
+          weight={weight || 0}
+          exerciseHistoryId={exerciseHistoryId || 0}
+        />
+      )}
       <Button
         key="list-loadmore-edit"
         onClick={() => {
