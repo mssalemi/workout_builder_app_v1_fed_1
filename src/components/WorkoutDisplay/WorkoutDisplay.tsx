@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import axios from "axios";
 import { Workout } from "../../types/types";
 import { AddExerciseToWorkout } from "../AddExerciseToWorkout";
@@ -37,6 +37,10 @@ const style: React.CSSProperties = { padding: "8px 0" };
 
 export function WorkoutDisplay({ workout }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    console.log("Modal", isModalOpen);
+  }, [isModalOpen]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -145,7 +149,6 @@ export function WorkoutDisplay({ workout }: Props) {
           loading: true,
         }}
         okText="Adding Exercise"
-        onOk={handleOk}
         onCancel={handleCancel}
         cancelText="Cancel"
       >
@@ -165,6 +168,12 @@ export function WorkoutDisplay({ workout }: Props) {
             </Title>
             <Text>
               {!completed && <Badge status="processing" text="In Progress" />}
+              {completed && (
+                <Badge
+                  status="success"
+                  text={<Tag color="green">Completed</Tag>}
+                />
+              )}
             </Text>
           </Col>
           <Col span={24}>
@@ -177,7 +186,7 @@ export function WorkoutDisplay({ workout }: Props) {
           <Col span={24}>
             <Button
               type="primary"
-              disabled={!completed}
+              disabled={completed || !workout?.exercises?.length}
               onClick={() => completeWorkout(workout.id!)}
             >
               Complete Workout

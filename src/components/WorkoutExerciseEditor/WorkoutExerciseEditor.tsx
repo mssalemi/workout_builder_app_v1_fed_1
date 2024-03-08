@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   CloseSquareFilled,
   CheckSquareFilled,
@@ -6,6 +7,19 @@ import {
 } from "@ant-design/icons";
 
 import { Input, Button, Space, Form, Tooltip, Spin, Flex } from "antd";
+
+const UPDATE_EXERCISE_IN_WORKOUT_MUTATION = `
+  mutation UpdateExerciseInWorkout($exerciseHistoryId: Int!, $newPerformanceData: PerformanceDataInput) {
+    updateExerciseInWorkout(input: {
+      exerciseHistoryId: $exerciseHistoryId,
+      newPerformanceData: $newPerformanceData
+    }) {
+      exercise {
+        id
+      }
+    }
+  }
+`;
 
 interface Props {
   sets: number;
@@ -22,14 +36,30 @@ export function WorkoutExerciseEditor({
   const [isEditing, setIsEditing] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [form] = Form.useForm();
-  const onSubmit = (values: any) => {
+  const onSubmit = async (values: any) => {
     const payload = {
       sets: parseInt(values.sets) || sets,
       reps: parseInt(values.reps) || reps,
       weight: parseInt(values.weight) || weight,
-      exerciseHistoryId: exerciseHistoryId,
     };
     console.log("payload: ", payload);
+    console.log("exerciseHistoryId: ", exerciseHistoryId);
+    const response = await axios.post(
+      "http://localhost:3000/graphql",
+      {
+        query: UPDATE_EXERCISE_IN_WORKOUT_MUTATION,
+        variables: {
+          newPerformanceData: payload,
+          exerciseHistoryId: exerciseHistoryId || 0,
+        },
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    setIsEditing(false); // Exit editing mode
+    setEditLoading(false); // Stop loading
+    console.log("response", response);
   };
 
   // const onFinishFailed = (errorInfo: any) => {
