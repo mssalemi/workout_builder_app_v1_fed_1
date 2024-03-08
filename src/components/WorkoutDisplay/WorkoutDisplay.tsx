@@ -161,7 +161,7 @@ export function WorkoutDisplay({ workout }: Props) {
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <Title level={3} keyboard>
-              {workout.title} -{" "}
+              {workout.title} - {workout.id}
             </Title>
             <Text>
               {!completed && <Badge status="processing" text="In Progress" />}
@@ -172,20 +172,16 @@ export function WorkoutDisplay({ workout }: Props) {
               pagination={false}
               dataSource={exercisesData}
               columns={columns}
-              footer={() => (
-                <>
-                  {!completed && (
-                    <Button
-                      type="primary"
-                      onClick={() => completeWorkout(workout?.id || 0)}
-                    >
-                      Complete Workout
-                    </Button>
-                  )}
-                  {completed && <Tag color="green">Completed</Tag>}
-                </>
-              )}
             />
+          </Col>
+          <Col span={24}>
+            <Button
+              type="primary"
+              disabled={!completed}
+              onClick={() => completeWorkout(workout.id!)}
+            >
+              Complete Workout
+            </Button>
           </Col>
           <FloatButton
             icon={<PlusOutlined />}
