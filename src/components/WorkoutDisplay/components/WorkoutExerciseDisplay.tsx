@@ -13,6 +13,7 @@ interface Props {
   weight: number;
   exerciseHistoryId: number;
   workoutId: number;
+  refetch: () => void;
 }
 
 const COMPLETE_WORKOUT_MUTATION = `
@@ -40,6 +41,7 @@ export function WorkoutExerciseDisplay({
   weight,
   exerciseHistoryId,
   workoutId,
+  refetch,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const completeWorkout = async (workoutId: number) => {
@@ -105,6 +107,7 @@ export function WorkoutExerciseDisplay({
           reps={reps || 0}
           weight={weight || 0}
           exerciseHistoryId={exerciseHistoryId || 0}
+          refetch={refetch}
         />
       )}
       <Button

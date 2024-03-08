@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useMutation, gql } from "@apollo/client";
+
 import {
   CloseSquareFilled,
   CheckSquareFilled,
@@ -8,12 +9,17 @@ import {
 
 import { Input, Button, Space, Form, Tooltip, Spin, Flex } from "antd";
 
-const UPDATE_EXERCISE_IN_WORKOUT_MUTATION = `
-  mutation UpdateExerciseInWorkout($exerciseHistoryId: Int!, $newPerformanceData: PerformanceDataInput) {
-    updateExerciseInWorkout(input: {
-      exerciseHistoryId: $exerciseHistoryId,
-      newPerformanceData: $newPerformanceData
-    }) {
+const UPDATE_EXERCISE_IN_WORKOUT_MUTATION = gql`
+  mutation UpdateExerciseInWorkout(
+    $exerciseHistoryId: Int!
+    $newPerformanceData: PerformanceDataInput!
+  ) {
+    updateExerciseInWorkout(
+      input: {
+        exerciseHistoryId: $exerciseHistoryId
+        newPerformanceData: $newPerformanceData
+      }
+    ) {
       exercise {
         id
       }
@@ -26,40 +32,37 @@ interface Props {
   reps: number;
   weight: number;
   exerciseHistoryId: number;
+  refetch: () => void;
 }
 export function WorkoutExerciseEditor({
   sets,
   reps,
   weight,
   exerciseHistoryId,
+  refetch,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [form] = Form.useForm();
-  const onSubmit = async (values: any) => {
+  const [updateExerciseMutation, { loading: updating, error }] = useMutation(
+    UPDATE_EXERCISE_IN_WORKOUT_MUTATION
+  );
+
+  const onSubmit = (values: any) => {
     const payload = {
-      sets: parseInt(values.sets) || sets,
-      reps: parseInt(values.reps) || reps,
-      weight: parseInt(values.weight) || weight,
+      sets: parseInt(values.sets, 10) || sets,
+      reps: parseInt(values.reps, 10) || reps,
+      weight: parseInt(values.weight, 10) || weight,
+      // Include other fields if necessary
     };
-    console.log("payload: ", payload);
-    console.log("exerciseHistoryId: ", exerciseHistoryId);
-    const response = await axios.post(
-      "http://localhost:3000/graphql",
-      {
-        query: UPDATE_EXERCISE_IN_WORKOUT_MUTATION,
-        variables: {
-          newPerformanceData: payload,
-          exerciseHistoryId: exerciseHistoryId || 0,
-        },
+    updateExerciseMutation({
+      variables: {
+        newPerformanceData: payload,
+        exerciseHistoryId,
       },
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-    setIsEditing(false); // Exit editing mode
-    setEditLoading(false); // Stop loading
-    console.log("response", response);
+    });
+    setIsEditing(false); // Exit editing mode after submission
+    refetch();
   };
 
   // const onFinishFailed = (errorInfo: any) => {

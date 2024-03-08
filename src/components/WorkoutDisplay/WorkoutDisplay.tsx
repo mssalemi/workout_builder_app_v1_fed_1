@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
-import axios from "axios";
+import { useMutation, gql } from "@apollo/client";
+
 import { Workout } from "../../types/types";
 import { AddExerciseToWorkout } from "../AddExerciseToWorkout";
 import { InfoCircleTwoTone, PlusOutlined } from "@ant-design/icons";
@@ -23,9 +24,10 @@ const { Title, Text } = Typography;
 
 interface Props {
   workout: Workout;
+  refetch: () => void;
 }
 
-const COMPLETE_WORKOUT_MUTATION = `
+const COMPLETE_WORKOUT_MUTATION = gql`
   mutation CompleteWorkout($input: CompleteWorkoutInput!) {
     completeWorkout(input: $input) {
       id
@@ -33,14 +35,8 @@ const COMPLETE_WORKOUT_MUTATION = `
   }
 `;
 
-const style: React.CSSProperties = { padding: "8px 0" };
-
-export function WorkoutDisplay({ workout }: Props) {
+export function WorkoutDisplay({ workout, refetch }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    console.log("Modal", isModalOpen);
-  }, [isModalOpen]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -48,6 +44,7 @@ export function WorkoutDisplay({ workout }: Props) {
 
   const handleOk = () => {
     console.log("called");
+    refetch();
     setIsModalOpen(false);
   };
 
@@ -55,26 +52,23 @@ export function WorkoutDisplay({ workout }: Props) {
     setIsModalOpen(false);
   };
 
+  const [completeWorkoutMutation] = useMutation(COMPLETE_WORKOUT_MUTATION);
+
   const completeWorkout = async (workoutId: number) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/graphql",
-        {
-          query: COMPLETE_WORKOUT_MUTATION,
-          variables: {
-            input: {
-              workoutId, // Assuming 'workoutId' is the correct field name inside the input object
-            },
-          },
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
-      // console.log("Workout completed successfully", response.data);
-      // Update UI or state as needed
-    } catch (error) {
-      console.error("Error completing workout", error);
-      // Handle error, possibly show a message to the user
-    }
+    completeWorkoutMutation({
+      variables: {
+        input: { workoutId },
+      },
+    })
+      .then((response) => {
+        // Handle response here if needed, e.g., updating local state or UI
+        console.log("Workout completed successfully", response.data);
+        refetch();
+      })
+      .catch((error) => {
+        console.error("Error completing workout", error);
+        // Handle error here, e.g., showing an error message
+      });
   };
 
   const exercisesData = workout?.exercises?.map((exercise) => {
@@ -118,7 +112,7 @@ export function WorkoutDisplay({ workout }: Props) {
       }) => {
         return (
           <div>
-            <WorkoutExerciseEditor {...performanceDataPlus} />
+            <WorkoutExerciseEditor refetch={refetch} {...performanceDataPlus} />
           </div>
         );
       },

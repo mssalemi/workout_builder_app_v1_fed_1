@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
+import { useQuery, gql } from "@apollo/client";
+
 import "./styles/WorkoutPage.css";
+import { Result, Skeleton, Button } from "antd";
 
-import axios from "axios";
-import { Result, Skeleton } from "antd";
-
-import { Workout } from "../types/types";
 import { WorkoutDisplay } from "../components/WorkoutDisplay";
 
-const FIND_WORKOUT_QUERY = `
+const FIND_WORKOUT_QUERY = gql`
   query FindWorkout($workoutId: ID!) {
     findWorkout(workoutId: $workoutId) {
       title
@@ -28,7 +27,6 @@ const FIND_WORKOUT_QUERY = `
           description
           bodyPartMain
         }
-        
         exerciseHistoryId
       }
     }
@@ -36,54 +34,25 @@ const FIND_WORKOUT_QUERY = `
 `;
 
 function WorkoutPage() {
-  const { id } = useParams();
-  const [workout, setWorkout] = useState<Workout | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  useEffect(() => {
-    const fetchWorkout = async () => {
-      try {
-        const response = await axios.post(
-          "http://localhost:3000/graphql",
-          {
-            query: FIND_WORKOUT_QUERY,
-            variables: {
-              workoutId: id,
-            },
-          },
-          { headers: { "Content-Type": "application/json" } }
-        );
-        const {
-          data: {
-            data: { findWorkout },
-          },
-        } = response;
-        console.log("findWorkout: ", findWorkout);
-        setWorkout(findWorkout);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { id } = useParams<{ id: string }>();
+  const { loading, error, data, refetch } = useQuery(FIND_WORKOUT_QUERY, {
+    variables: { workoutId: id },
+  });
 
-    fetchWorkout();
-  }, [id]);
-
-  if (loading) {
-    return <Skeleton avatar paragraph={{ rows: 6 }} />;
-  }
+  if (loading) return <Skeleton avatar paragraph={{ rows: 6 }} />;
+  if (error) return <p>Error :(</p>;
 
   return (
     <div className="App">
       <header className="App-header">
-        {workout ? (
-          <WorkoutDisplay workout={workout} />
+        {data?.findWorkout ? (
+          <WorkoutDisplay workout={data.findWorkout} refetch={refetch} />
         ) : (
           <Result
             status="404"
             title="404"
             subTitle="Sorry, the page you visited does not exist."
-            // extra={<Button type="primary">Back Home</Button>}
+            extra={<Button type="primary">Back Home</Button>}
           />
         )}
       </header>
