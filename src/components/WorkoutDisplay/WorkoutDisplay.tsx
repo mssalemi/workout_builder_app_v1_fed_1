@@ -3,7 +3,11 @@ import { useMutation, gql } from "@apollo/client";
 
 import { Workout } from "../../types/types";
 import { AddExerciseToWorkout } from "../AddExerciseToWorkout";
-import { InfoCircleTwoTone, PlusOutlined } from "@ant-design/icons";
+import {
+  InfoCircleTwoTone,
+  PlusOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
 import {
   Col,
   Row,
@@ -136,15 +140,13 @@ export function WorkoutDisplay({ workout, refetch }: Props) {
   return (
     <div>
       <Modal
-        title="Basic Modal"
         open={isModalOpen}
         okButtonProps={{
           disabled: true,
           loading: true,
         }}
-        okText="Adding Exercise"
+        okText=" "
         onCancel={handleCancel}
-        cancelText="Cancel"
       >
         {workout && (
           <AddExerciseToWorkout

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Row, Col, Typography, Avatar } from "antd";
+import { Row, Col, Typography, Carousel } from "antd";
 
 import WorkoutsTable from "../components/WorkoutsTable/WorkoutsTable";
 import { Workout } from "../types/types";
@@ -32,6 +32,14 @@ const FIND_WORKOUTS_BY_USER_QUERY = `
     }
   }
 `;
+
+const contentStyle: React.CSSProperties = {
+  height: "320px",
+  color: "#fff",
+  lineHeight: "160px",
+  textAlign: "center",
+  background: "#364d79",
+};
 
 function HomePage() {
   const userId = 1;
@@ -69,7 +77,7 @@ function HomePage() {
 
   return (
     <Row gutter={16}>
-      <Col span={16}>
+      <Col span={24}>
         <Title level={2}>Workouts</Title>
         <Paragraph>
           This is your workout dashboard. Here you can view all your workouts,
@@ -88,6 +96,22 @@ function HomePage() {
       </Col>
       <Col span={16}>
         <WorkoutsTable workouts={workouts} />
+      </Col>
+      <Col span={8}>
+        <Carousel autoplay>
+          <div>
+            <h3 style={contentStyle}>1</h3>
+          </div>
+          <div>
+            <h3 style={contentStyle}>2</h3>
+          </div>
+          <div>
+            <h3 style={contentStyle}>3</h3>
+          </div>
+          <div>
+            <h3 style={contentStyle}>4</h3>
+          </div>
+        </Carousel>
       </Col>
     </Row>
   );
