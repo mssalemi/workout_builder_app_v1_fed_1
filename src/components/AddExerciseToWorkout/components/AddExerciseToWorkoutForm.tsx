@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Form, InputNumber, Button } from "antd";
+import { Form, InputNumber, Button, Switch } from "antd";
 
 interface Props {
   exercise: {
@@ -24,33 +24,43 @@ export function AddExerciseToWorkoutForm({ exercise, onOk, workoutId }: Props) {
   const [reps, setReps] = useState(0);
   const [weight, setWeight] = useState(0);
   const [sets, setSets] = useState(0);
+  const [userId, setUserId] = useState(1);
 
-  const handleAddExercise = async (performanceData: {
+  const handleAddExercise = async (values: {
     reps: number;
     weight: number;
     sets: number;
+    userId: boolean;
   }) => {
+    console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 moew", values.userId);
     if (exercise) {
       try {
-        await axios.post(
+        const payload = {
+          workoutId: workoutId,
+          exerciseId: exercise.exerciseId,
+          performanceData: {
+            reps: values.reps,
+            weight: values.weight,
+            sets: values.sets,
+          },
+          userId: values.userId ? 1 : 2,
+        };
+        console.log("payload", payload);
+        const response = await axios.post(
           "http://localhost:3000/graphql", // Ensure this URL matches your GraphQL server endpoint
           {
             query: ADD_EXERCISE_TO_WORKOUT_MUTATION,
             variables: {
-              input: {
-                workoutId: workoutId,
-                exerciseId: exercise.exerciseId,
-                performanceData,
-              },
+              input: payload,
             },
           },
           { headers: { "Content-Type": "application/json" } }
         );
-        // console.log(response.data);
+        console.log(response.data);
         onOk();
         // Handle success (e.g., show a success message or update UI)
       } catch (error) {
-        // console.error(error);
+        console.error(error);
         // Handle error (e.g., show an error message)
       }
     }
@@ -61,8 +71,22 @@ export function AddExerciseToWorkoutForm({ exercise, onOk, workoutId }: Props) {
     <Form
       form={form}
       layout="vertical"
-      onFinish={(values) => handleAddExercise(values)}
+      onFinish={(values) => {
+        console.log("🥚🥚🥚🥚🥚🥚🥚🥚🥚🥚🥚values", values);
+        handleAddExercise(values);
+      }}
     >
+      <Form.Item
+        label="User ID Switch (Left: User 1, Right: User 2)"
+        name="userId"
+        valuePropName="checked" // Ensures the form item controls the Switch checked state
+      >
+        <Switch
+          checkedChildren="Mehdi"
+          defaultChecked
+          unCheckedChildren="Mate"
+        />
+      </Form.Item>
       <Form.Item
         label="Sets"
         name="sets"
@@ -86,7 +110,7 @@ export function AddExerciseToWorkoutForm({ exercise, onOk, workoutId }: Props) {
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
-          Create Workout
+          Add Exercise to Workout
         </Button>
       </Form.Item>
     </Form>

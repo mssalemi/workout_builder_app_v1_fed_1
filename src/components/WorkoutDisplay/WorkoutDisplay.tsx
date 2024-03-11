@@ -1,6 +1,9 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useMutation, gql } from "@apollo/client";
 
+import { createAvatar } from "@dicebear/core";
+import { lorelei } from "@dicebear/collection";
+
 import { Workout } from "../../types/types";
 import { AddExerciseToWorkout } from "../AddExerciseToWorkout";
 import {
@@ -19,12 +22,19 @@ import {
   Tooltip,
   Table,
   Badge,
-  Space,
+  Avatar,
   Button,
 } from "antd";
 import { WorkoutExerciseEditor } from "../WorkoutExerciseEditor/WorkoutExerciseEditor";
 
 const { Title, Text } = Typography;
+
+const avatar = createAvatar(lorelei, {
+  seed: "John Doe",
+  // ... other options
+});
+
+const svg = avatar.toString();
 
 interface Props {
   workout: Workout;
@@ -39,8 +49,20 @@ const COMPLETE_WORKOUT_MUTATION = gql`
   }
 `;
 
+const DELETE_EXERCISE_FROM_WORKOUT_MUTATION = gql`
+  mutation DeleteExerciseFromWorkout($input: DeleteExerciseFromWorkoutInput!) {
+    deleteExerciseFromWorkout(input: $input) {
+      success
+      errors
+    }
+  }
+`;
+
 export function WorkoutDisplay({ workout, refetch }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [deleteExerciseMutation, { loading: deleting, error: deleteError }] =
+    useMutation(DELETE_EXERCISE_FROM_WORKOUT_MUTATION);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -75,9 +97,30 @@ export function WorkoutDisplay({ workout, refetch }: Props) {
       });
   };
 
+  const deleteExercise = async (exerciseHistoryId: number) => {
+    deleteExerciseMutation({
+      variables: {
+        input: { exerciseHistoryId },
+      },
+    })
+      .then((response) => {
+        // Handle response here if needed, e.g., updating local state or UI
+        console.log("Exercise deleted successfully", response.data);
+        refetch();
+      })
+      .catch((error) => {
+        console.error("Error deleting exercise", error);
+        // Handle error here, e.g., showing an error message
+      });
+  };
+
   const exercisesData = workout?.exercises?.map((exercise) => {
     const { performanceData, exerciseHistoryId } = exercise;
     const { sets, reps, weight } = performanceData || {};
+
+    console.log("👍👍👍👍👍👍exercise", exercise);
+    console.log("👍👍👍👍👍👍exercise userId", exercise?.userId || 0);
+
     return {
       key: exercise?.exerciseHistoryId,
       title: exercise?.exercise?.title || "NO TITLE FOUND",
@@ -88,6 +131,10 @@ export function WorkoutDisplay({ workout, refetch }: Props) {
         exerciseHistoryId: exerciseHistoryId || 0,
       },
       completed: exercise.completed || false,
+      info: {
+        bodyPartMain: exercise?.exercise?.bodyPartMain || "NO BODY PART FOUND",
+        description: exercise?.exercise?.description || "NO DESCRIPTION FOUND",
+      },
       stats: (
         <Flex justify={"center"} align={"center"}>
           <Tooltip title="Needs more data.">
@@ -95,10 +142,24 @@ export function WorkoutDisplay({ workout, refetch }: Props) {
           </Tooltip>
         </Flex>
       ),
+      userId: exercise?.userId || 0,
     };
   });
 
   const columns = [
+    {
+      title: "User",
+      dataIndex: "user",
+      key: "user",
+      render: (text: any, record: any) => {
+        console.log("columns for exercise", record);
+        const url =
+          record.userId == 1
+            ? "https://api.dicebear.com/7.x/bottts/svg?seed=Boots?backgroundColor=b6e3f4,c0aede,d1d4f9"
+            : "https://api.dicebear.com/7.x/bottts/svg?seed=Ginger";
+        return <Avatar src={url} />;
+      },
+    },
     {
       title: "Title",
       dataIndex: "title",
@@ -122,9 +183,40 @@ export function WorkoutDisplay({ workout, refetch }: Props) {
       },
     },
     {
+      title: "Body Part",
+      dataIndex: "bodyPart",
+      key: "bodyPart",
+      render: (text: any, record: any) => {
+        console.log(record);
+        return (
+          <>
+            <Text>{record?.info.bodyPartMain}</Text>
+          </>
+        );
+      },
+    },
+    {
       title: "Stats",
       dataIndex: "stats",
       key: "stats",
+    },
+    {
+      title: "Delete",
+      dataIndex: "delete",
+      key: "delete",
+      render: (text: any, record: any) => {
+        return (
+          <Button
+            type="primary"
+            danger
+            onClick={() =>
+              deleteExercise(record.performanceDataPlus.exerciseHistoryId)
+            }
+          >
+            <CloseCircleOutlined />
+          </Button>
+        );
+      },
     },
   ];
 

@@ -8,6 +8,7 @@ export interface Workout {
 export interface Exercise {
   completed?: boolean;
   order?: number;
+  userId?: number;
   performanceData?: PerformanceData;
   exercise?: ExerciseDetails;
   exerciseHistoryId?: number;
@@ -25,4 +26,5 @@ export interface ExerciseDetails {
   description?: string;
   bodyPartMain?: string;
   exerciseHistoryId?: number;
+  userId?: number;
 }

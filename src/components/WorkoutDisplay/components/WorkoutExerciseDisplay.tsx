@@ -90,14 +90,13 @@ export function WorkoutExerciseDisplay({
 
   return (
     <div>
-      <Text strong>{title} </Text>
+      <Text strong>{title} hey</Text>
       <Text>
         {sets}x{reps} @ {weight} lbs
       </Text>
       <Text underline onClick={() => setIsEditing(!isEditing)}>
         Edit
       </Text>
-
       <Tag color={completed ? "green" : "red"}>
         {completed ? "Completed" : "Not Completed"}
       </Tag>
@@ -110,6 +109,7 @@ export function WorkoutExerciseDisplay({
           refetch={refetch}
         />
       )}
+      hi
       <Button
         key="list-loadmore-edit"
         onClick={() => {

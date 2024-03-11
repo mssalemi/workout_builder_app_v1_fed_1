@@ -16,6 +16,7 @@ const FIND_WORKOUT_QUERY = gql`
       exercises {
         completed
         order
+        userId
         performanceData {
           reps
           weight
@@ -38,6 +39,9 @@ function WorkoutPage() {
   const { loading, error, data, refetch } = useQuery(FIND_WORKOUT_QUERY, {
     variables: { workoutId: id },
   });
+
+  console.log("WORKOUTS", data?.findWorkout);
+  console.log(error);
 
   if (loading) return <Skeleton avatar paragraph={{ rows: 6 }} />;
   if (error) return <p>Error :(</p>;
