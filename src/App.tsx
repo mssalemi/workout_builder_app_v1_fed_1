@@ -4,20 +4,42 @@ import {
   InMemoryCache,
   HttpLink,
   ApolloProvider,
+  from,
 } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { Row, Col, Menu } from "antd";
 import { HomeOutlined, AppstoreAddOutlined } from "@ant-design/icons";
+
+import { SignInForm } from "./components/SignIn/SignInForm";
 
 import WorkoutPage from "./pages/WorkoutPage";
 import HomePage from "./pages/HomePage";
 import NewWorkoutPage from "./pages/NewWorkoutPage";
 
 // Set up Apollo Client
+// Middleware to add the token to the headers of each request
+const authLink = setContext((_, { headers }) => {
+  // Retrieve the token from local storage
+  const token = localStorage.getItem("user-token");
+
+  // Return the headers to the context so the HTTP link can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
+
+// Set up Apollo Client with the auth link and HttpLink using an array
+const httpLink = new HttpLink({
+  uri: "http://localhost:3000/graphql", // Replace with your GraphQL endpoint
+});
+
 const client = new ApolloClient({
-  link: new HttpLink({
-    uri: "http://localhost:3000/graphql", // Replace with your GraphQL endpoint
-  }),
+  link: from([authLink, httpLink]), // Use `from` to combine links into a single link
   cache: new InMemoryCache(),
 });
 
@@ -42,6 +64,7 @@ function App() {
               padding: "0 2rem",
             }}
           >
+            <SignInForm />
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/:id" element={<WorkoutPage />} />

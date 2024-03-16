@@ -43,6 +43,9 @@ function WorkoutPage() {
   console.log("WORKOUTS", data?.findWorkout);
   console.log(error);
 
+  const token = localStorage.getItem("user-token");
+  console.log("🤖🤖🤖🤖🤖🤖 JWT Token:", token);
+
   if (loading) return <Skeleton avatar paragraph={{ rows: 6 }} />;
   if (error) return <p>Error :(</p>;
 
