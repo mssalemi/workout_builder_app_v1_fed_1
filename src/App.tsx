@@ -10,12 +10,7 @@ import { setContext } from "@apollo/client/link/context";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { Row, Col, Menu, Button } from "antd";
-import {
-  HomeOutlined,
-  AppstoreAddOutlined,
-  LoginOutlined,
-  LogoutOutlined,
-} from "@ant-design/icons";
+import { HomeOutlined, AppstoreAddOutlined } from "@ant-design/icons";
 
 import { SignInForm } from "./components/SignIn/SignInForm";
 
@@ -48,11 +43,13 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const signOutUser = () => {
-  localStorage.removeItem("user-token");
-};
-
 function App() {
+  const [token, setToken] = React.useState(localStorage.getItem("user-token"));
+  const clearToken = () => {
+    localStorage.removeItem("user-token");
+    setToken(null);
+  };
+
   return (
     <ApolloProvider client={client}>
       <Router>
@@ -60,7 +57,7 @@ function App() {
           <Col span={24}>
             <Menu mode="horizontal">
               <Menu.Item key="user-status">
-                <SignInForm />
+                <SignInForm setToken={setToken} token={token} />
               </Menu.Item>
               <Menu.Item key="home" icon={<HomeOutlined />}>
                 <Link to="/">Home</Link>
@@ -68,6 +65,11 @@ function App() {
               <Menu.Item key="newWorkout" icon={<AppstoreAddOutlined />}>
                 <Link to="/workouts/new">Create Workout</Link>
               </Menu.Item>
+              {token && (
+                <Menu.Item key="sign-out" style={{ marginLeft: "auto" }}>
+                  <Button onClick={clearToken}>Sign Out</Button>
+                </Menu.Item>
+              )}
             </Menu>
           </Col>
           <Col
@@ -76,7 +78,6 @@ function App() {
               padding: "0 2rem",
             }}
           >
-            {/* <SignInForm /> */}
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/:id" element={<WorkoutPage />} />

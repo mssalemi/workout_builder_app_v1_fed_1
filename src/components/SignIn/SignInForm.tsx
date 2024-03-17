@@ -20,9 +20,14 @@ const SIGN_IN_MUTATION = gql`
   }
 `;
 
-export function useAuth() {
+export function useAuth({
+  token,
+  setToken,
+}: {
+  token: string | null;
+  setToken: (token: string | null) => void;
+}) {
   const [signIn, { loading }] = useMutation(SIGN_IN_MUTATION);
-  const [token, setToken] = useState(localStorage.getItem("user-token"));
 
   const navigate = useNavigate();
 
@@ -62,8 +67,17 @@ export function useAuth() {
   return { token, signInUser, signOutUser, loading };
 }
 
-export function SignInForm() {
-  const { signInUser, token, signOutUser, loading } = useAuth();
+export function SignInForm({
+  setToken,
+  token,
+}: {
+  setToken: (token: string | null) => void;
+  token: string | null;
+}) {
+  const { signInUser, signOutUser, loading } = useAuth({
+    token: token,
+    setToken: setToken,
+  });
 
   // Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,23 +87,29 @@ export function SignInForm() {
 
   const handleOk = () => {
     setIsModalOpen(false);
+    setToken(token);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
+  const onFinish = (values: { userId: string; password: string }) => {
+    signInUser(values);
+    handleOk();
+  };
+
   const signInFormMarkup = (
     <Form
       name="sign_in_form"
       initialValues={{ remember: true }}
-      onFinish={signInUser}
+      onFinish={onFinish}
       autoComplete="off"
     >
       <Form.Item
         label="Username"
         name="userId"
-        rules={[{ required: true, message: "Please input your username!" }]}
+        rules={[{ required: true, message: "Please input your userId!" }]}
       >
         <InputNumber />
       </Form.Item>
@@ -110,19 +130,6 @@ export function SignInForm() {
     </Form>
   );
 
-  if (token) {
-    return (
-      <Tooltip title="Sign Out">
-        <Avatar
-          style={{ backgroundColor: "#f56a00", verticalAlign: "middle" }}
-          size="small"
-          icon={<UserOutlined />}
-          onClick={signOutUser}
-        />
-      </Tooltip>
-    );
-  }
-
   return (
     <>
       <Modal
@@ -133,38 +140,31 @@ export function SignInForm() {
       >
         {signInFormMarkup}
       </Modal>
-      <UserStatusIndicator
-        token={token}
-        signOutUser={signOutUser}
-        showSignInModal={showModal}
-      />
+      <UserStatusIndicator token={token} showSignInModal={showModal} />
     </>
   );
 }
 
 interface UserStatusIndicatorProps {
   token: string | null;
-  signOutUser: () => void;
   showSignInModal: () => void;
 }
 const UserStatusIndicator = ({
   token,
-  signOutUser,
   showSignInModal,
 }: UserStatusIndicatorProps) => {
   const avatarStyle = token
-    ? { backgroundColor: "#007bff", verticalAlign: "middle" } // Blue for signed in
-    : { backgroundColor: "#007bff", verticalAlign: "middle" }; // Orange for not signed in
+    ? { backgroundColor: "#0095c7", verticalAlign: "middle" } // Blue for signed in
+    : { backgroundColor: "#17348d", verticalAlign: "middle" }; // Orange for not signed in
 
-  const tooltipTitle = token ? "Sign Out" : "User not signed in";
+  const tooltipTitle = token ? "Hello there, its time to lift!" : "Sign In";
 
   return (
     <Tooltip title={tooltipTitle}>
       <Avatar
         style={avatarStyle}
-        size="small"
         icon={<UserOutlined />}
-        onClick={token ? signOutUser : showSignInModal} // Only allow clicking if signed in
+        onClick={showSignInModal} // Only allow clicking if signed in
       />
     </Tooltip>
   );
