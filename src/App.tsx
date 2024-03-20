@@ -23,6 +23,7 @@ import NewWorkoutPage from "./pages/NewWorkoutPage";
 const authLink = setContext((_, { headers }) => {
   // Retrieve the token from local storage
   const token = localStorage.getItem("user-token");
+  console.log("token", token);
 
   // Return the headers to the context so the HTTP link can read them
   return {

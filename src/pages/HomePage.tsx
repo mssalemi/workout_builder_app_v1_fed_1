@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Row, Col, Typography, Carousel } from "antd";
+import { Row, Col, Typography, Carousel, Skeleton } from "antd";
 
 import WorkoutsTable from "../components/WorkoutsTable/WorkoutsTable";
 import { Workout } from "../types/types";
@@ -8,8 +8,8 @@ import { Workout } from "../types/types";
 const { Title, Paragraph } = Typography;
 
 const FIND_WORKOUTS_BY_USER_QUERY = `
-  query FindWorkoutsByUser($userId: ID!) {
-    findWorkoutsByUser(userId: $userId) {
+  query FindWorkoutsByUser {
+    findWorkoutsByUser {
       title
       id
       userId
@@ -45,7 +45,7 @@ function HomePage() {
   const userId = 1;
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const token = localStorage.getItem("user-token");
   useEffect(() => {
     const fetchWorkouts = async () => {
       setLoading(true);
@@ -54,9 +54,13 @@ function HomePage() {
           "http://localhost:3000/graphql",
           {
             query: FIND_WORKOUTS_BY_USER_QUERY,
-            variables: { userId: userId },
           },
-          { headers: { "Content-Type": "application/json" } }
+          {
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          }
         );
         const {
           data: {
@@ -95,7 +99,7 @@ function HomePage() {
         </Title>
       </Col>
       <Col span={16}>
-        <WorkoutsTable workouts={workouts} />
+        {loading ? <Skeleton active /> : <WorkoutsTable workouts={workouts} />}
       </Col>
       <Col span={8}>
         <Carousel autoplay>
