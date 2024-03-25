@@ -14,6 +14,7 @@ const CREATE_WORKOUT_MUTATION = `
 export function NewWorkoutForm() {
   const [form] = Form.useForm();
   const navigate = useNavigate(); // Initialize useNavigate
+  const token = localStorage.getItem("user-token");
 
   const handleCreateWorkout = async (values: any) => {
     console.log(values);
@@ -24,13 +25,15 @@ export function NewWorkoutForm() {
           query: CREATE_WORKOUT_MUTATION,
           variables: {
             input: {
-              userId: 1, // Assuming the userId is set here directly
               title: values.title,
             },
           },
         },
         {
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         }
       );
 
