@@ -25,6 +25,7 @@ const GET_EXERCISE_QUERY = `
 export function AddExerciseToWorkout({ workoutId, userId, onOk }: Props) {
   const [exercises, setExercises] = useState<ExerciseDetails[]>([]);
   const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem("user-token");
 
   const [exercise, setExercise] = useState<{
     exerciseId: number;
@@ -38,7 +39,12 @@ export function AddExerciseToWorkout({ workoutId, userId, onOk }: Props) {
         const response = await axios.post(
           "http://localhost:3000/graphql", // Ensure this URL matches your GraphQL server endpoint
           { query: GET_EXERCISE_QUERY },
-          { headers: { "Content-Type": "application/json" } }
+          {
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          }
         );
         // console.log(response);
         const {
@@ -46,6 +52,7 @@ export function AddExerciseToWorkout({ workoutId, userId, onOk }: Props) {
             data: { exercises },
           },
         } = response;
+        console.log(response);
         onOk();
         // console.log(exercises);
         setExercises(exercises);

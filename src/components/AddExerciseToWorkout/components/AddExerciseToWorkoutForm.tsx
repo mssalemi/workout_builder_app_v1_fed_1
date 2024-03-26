@@ -32,6 +32,7 @@ export function AddExerciseToWorkoutForm({ exercise, onOk, workoutId }: Props) {
     sets: number;
     userId: boolean;
   }) => {
+    const token = localStorage.getItem("user-token");
     console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 moew", values.userId);
     if (exercise) {
       try {
@@ -43,7 +44,6 @@ export function AddExerciseToWorkoutForm({ exercise, onOk, workoutId }: Props) {
             weight: values.weight,
             sets: values.sets,
           },
-          userId: values.userId ? 1 : 2,
         };
         console.log("payload", payload);
         const response = await axios.post(
@@ -54,13 +54,18 @@ export function AddExerciseToWorkoutForm({ exercise, onOk, workoutId }: Props) {
               input: payload,
             },
           },
-          { headers: { "Content-Type": "application/json" } }
+          {
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          }
         );
-        console.log(response.data);
+        console.log("response", response.data);
         onOk();
         // Handle success (e.g., show a success message or update UI)
       } catch (error) {
-        console.error(error);
+        console.error("error", error);
         // Handle error (e.g., show an error message)
       }
     }
