@@ -26,6 +26,7 @@ export function NewWorkoutForm() {
           variables: {
             input: {
               title: values.title,
+              // workoutProgramId: 1,
             },
           },
         },

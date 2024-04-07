@@ -30,7 +30,7 @@ export function AddExerciseToWorkoutForm({ exercise, onOk, workoutId }: Props) {
     reps: number;
     weight: number;
     sets: number;
-    userId: boolean;
+    userId: number;
   }) => {
     const token = localStorage.getItem("user-token");
     console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 moew", values.userId);
@@ -44,6 +44,7 @@ export function AddExerciseToWorkoutForm({ exercise, onOk, workoutId }: Props) {
             weight: values.weight,
             sets: values.sets,
           },
+          userId: values.userId || 0,
         };
         console.log("payload", payload);
         const response = await axios.post(
@@ -83,14 +84,9 @@ export function AddExerciseToWorkoutForm({ exercise, onOk, workoutId }: Props) {
     >
       <Form.Item
         label="User ID Switch (Left: User 1, Right: User 2)"
-        name="userId"
-        valuePropName="checked" // Ensures the form item controls the Switch checked state
+        name="userId" // Ensures the form item controls the Switch checked state
       >
-        <Switch
-          checkedChildren="Mehdi"
-          defaultChecked
-          unCheckedChildren="Mate"
-        />
+        <InputNumber></InputNumber>
       </Form.Item>
       <Form.Item
         label="Sets"

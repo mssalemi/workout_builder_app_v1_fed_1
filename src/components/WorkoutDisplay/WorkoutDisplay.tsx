@@ -153,11 +153,34 @@ export function WorkoutDisplay({ workout, refetch }: Props) {
       key: "user",
       render: (text: any, record: any) => {
         console.log("columns for exercise", record);
-        const url =
-          record.userId == 1
-            ? "https://api.dicebear.com/7.x/bottts/svg?seed=Boots?backgroundColor=b6e3f4,c0aede,d1d4f9"
-            : "https://api.dicebear.com/7.x/bottts/svg?seed=Ginger";
-        return <Avatar src={url} />;
+        const users = [
+          {
+            userId: 1,
+            username: "MedxMan",
+            url: "https://api.dicebear.com/7.x/bottts/svg?seed=Boots?backgroundColor=b6e3f4,c0aede,d1d4f9",
+          },
+          {
+            userId: 2,
+            url: "https://api.dicebear.com/8.x/bottts/svg?seed=Simba",
+            username: "Mate",
+          },
+          {
+            userId: 3,
+            url: "https://api.dicebear.com/8.x/bottts/svg?seed=Muffin",
+            username: "Moshid",
+          },
+        ];
+
+        const url = users.find((user) => user.userId === record.userId)?.url;
+
+        // record.userId === 1
+        //   ? "https://api.dicebear.com/7.x/bottts/svg?seed=Boots?backgroundColor=b6e3f4,c0aede,d1d4f9"
+        //   : "https://api.dicebear.com/7.x/bottts/svg?seed=Ginger";
+        return (
+          // <Badge.Ribbon text="MedxMan">
+          <Avatar src={url} />
+          // </Badge.Ribbon>
+        );
       },
     },
     {
