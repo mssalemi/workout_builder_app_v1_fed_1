@@ -8,7 +8,7 @@ import { Result, Skeleton, Button } from "antd";
 import { WorkoutDisplay } from "../components/WorkoutDisplay";
 
 const FIND_WORKOUT_QUERY = gql`
-  query FindWorkout($workoutId: ID!) {
+  query FindWorkout($workoutId: Int!) {
     findWorkout(workoutId: $workoutId) {
       title
       id
@@ -37,11 +37,8 @@ const FIND_WORKOUT_QUERY = gql`
 function WorkoutPage() {
   const { id } = useParams<{ id: string }>();
   const { loading, error, data, refetch } = useQuery(FIND_WORKOUT_QUERY, {
-    variables: { workoutId: id },
+    variables: { workoutId: parseInt(id!, 10) },
   });
-
-  console.log("WORKOUTS", data?.findWorkout);
-  console.log(error);
 
   const token = localStorage.getItem("user-token");
   console.log("🤖🤖🤖🤖🤖🤖 JWT Token:", token);

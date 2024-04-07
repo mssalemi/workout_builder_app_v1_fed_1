@@ -24,6 +24,8 @@ import {
   Badge,
   Avatar,
   Button,
+  Popconfirm,
+  Space,
 } from "antd";
 import { WorkoutExerciseEditor } from "../WorkoutExerciseEditor/WorkoutExerciseEditor";
 
@@ -172,13 +174,23 @@ export function WorkoutDisplay({ workout, refetch }: Props) {
         ];
 
         const url = users.find((user) => user.userId === record.userId)?.url;
-
+        const username = users.find(
+          (user) => user.userId === record.userId
+        )?.username;
         // record.userId === 1
         //   ? "https://api.dicebear.com/7.x/bottts/svg?seed=Boots?backgroundColor=b6e3f4,c0aede,d1d4f9"
         //   : "https://api.dicebear.com/7.x/bottts/svg?seed=Ginger";
         return (
           // <Badge.Ribbon text="MedxMan">
-          <Avatar src={url} />
+          <Flex gap="middle" justify="center" align="center" vertical>
+            <Space>
+              <Avatar src={url} />
+            </Space>
+            <Space>
+              <Text keyboard>{username}</Text>
+            </Space>
+          </Flex>
+
           // </Badge.Ribbon>
         );
       },
