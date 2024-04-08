@@ -25,7 +25,6 @@ import WorkoutProgramsPage from "./pages/WorkoutProgramsPage";
 const authLink = setContext((_, { headers }) => {
   // Retrieve the token from local storage
   const token = localStorage.getItem("user-token");
-  console.log("token", token);
 
   // Return the headers to the context so the HTTP link can read them
   return {
@@ -47,12 +46,6 @@ const client = new ApolloClient({
 });
 
 function App() {
-  const [token, setToken] = React.useState(localStorage.getItem("user-token"));
-  const clearToken = () => {
-    localStorage.removeItem("user-token");
-    setToken(null);
-  };
-
   return (
     <ApolloProvider client={client}>
       <Router>
@@ -65,7 +58,7 @@ function App() {
           >
             <Routes>
               <Route path="/" element={<V1PageContent />} />
-              <Route path="/v2" element={<V2PageContent />} />
+              <Route path="/v2/*" element={<V2PageContent />} />
             </Routes>
           </Col>
         </Row>
@@ -119,11 +112,6 @@ export const V1PageContent = () => {
 };
 
 export const V2PageContent = () => {
-  const [token, setToken] = React.useState(localStorage.getItem("user-token"));
-  const clearToken = () => {
-    localStorage.removeItem("user-token");
-    setToken(null);
-  };
   return (
     <Row>
       <Col span={24}>

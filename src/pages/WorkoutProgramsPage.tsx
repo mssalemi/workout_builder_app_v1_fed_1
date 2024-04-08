@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, createContext } from "react";
+import { useState, useCallback, useEffect, useReducer } from "react";
 import { useMutation, gql } from "@apollo/client";
 
 import {
@@ -19,24 +19,57 @@ import { ExitIcon } from "@shopify/polaris-icons";
 
 import UserWorkoutProgramManager from "../components/UserWorkoutProgramManager/UserWorkoutProgramManager";
 
+interface UserState {
+  id: string;
+  name: string;
+  email: string;
+}
+
 function WorkoutProgramsPage() {
   // Set up React Context, to hold the user data
   // RN: its only stored in local storage
 
   const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<{
-    id: string;
-    name: string;
-    email: string;
-  } | null>(null);
+  const [user, setUser] = useState<UserState | null>(null);
 
   const signOut = () => {
-    console.log("signing out");
     localStorage.removeItem("user-token");
     localStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };
+
+  const initialState: {
+    user: UserState | null;
+    token: string | null;
+  } = {
+    user: user,
+    token: token,
+  };
+
+  const ourReducer = (
+    state: {
+      user: UserState | null;
+      token: string | null;
+    },
+    action: { type: string }
+  ) => {
+    switch (action.type) {
+      case "LOGOUT":
+        signOut();
+        const newState = { ...state, user: null, token: null };
+        return newState;
+      case "LOGIN":
+        return {
+          user: user,
+          token: token,
+        };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(ourReducer, initialState);
 
   useEffect(() => {
     const token = localStorage.getItem("user-token");
@@ -47,45 +80,44 @@ function WorkoutProgramsPage() {
     if (user) {
       setUser(JSON.parse(user));
     }
+    if (user && token) {
+      dispatch({ type: "LOGIN" });
+    }
   }, []);
 
-  const UserContext = createContext<{
-    token: string | null;
-    user: {
-      id: string;
-      name: string;
-      email: string;
-    } | null;
-  }>({
-    user: user,
-    token: token,
-  });
+  const toggleUserLogout = () => {
+    const action = { type: "LOGOUT" };
+    dispatch(action);
+  };
+
+  const toggleUserLogin = () => {
+    const action = { type: "LOGIN" };
+    dispatch(action);
+  };
+
+  useEffect(() => {
+    console.log("[WorkoutProgramV2] Global User State", state);
+  }, [state]);
 
   return (
     <Page title="WorkoutProgram Manager">
-      <UserContext.Provider
-        value={{
-          user: user,
-          token: token,
-        }}
-      >
-        <Layout>
+      <Layout>
+        <Layout.Section>
+          <SignInCard
+            user={state.user}
+            setUser={setUser}
+            token={state.token}
+            toggleUserLogin={toggleUserLogin}
+            setToken={setToken}
+            signOut={toggleUserLogout}
+          />
+        </Layout.Section>
+        {state.user && state.token && (
           <Layout.Section>
-            <SignInCard
-              user={user}
-              setUser={setUser}
-              token={token}
-              setToken={setToken}
-              signOut={signOut}
-            />
+            <UserWorkoutProgramManager></UserWorkoutProgramManager>
           </Layout.Section>
-          {user && token && (
-            <Layout.Section>
-              <UserWorkoutProgramManager></UserWorkoutProgramManager>
-            </Layout.Section>
-          )}
-        </Layout>
-      </UserContext.Provider>
+        )}
+      </Layout>
     </Page>
   );
 }
@@ -100,6 +132,7 @@ interface SignInCardProps {
   setToken: (token: string | null) => void;
   token: string | null;
   signOut: () => void;
+  toggleUserLogin: () => void;
 }
 
 const SignInCard = ({
@@ -108,6 +141,7 @@ const SignInCard = ({
   setUser,
   setToken,
   signOut,
+  toggleUserLogin,
 }: SignInCardProps) => {
   const [userId, setUserId] = useState("1");
   const [password, setPassword] = useState("");
@@ -126,22 +160,9 @@ const SignInCard = ({
     }
   `;
 
-  useEffect(() => {
-    const token = localStorage.getItem("user-token");
-    const user = localStorage.getItem("user");
-    if (token) {
-      setToken(token);
-    }
-    if (user) {
-      setUser(JSON.parse(user));
-    }
-  }, [setToken, setUser]);
-
   const [signIn, { loading }] = useMutation(SIGN_IN_MUTATION);
 
   const handleSubmit = useCallback(async () => {
-    console.log("userId", userId);
-    console.log("password", password);
     const signInUser = async ({
       userId,
       password,
@@ -155,16 +176,12 @@ const SignInCard = ({
           password: password,
         },
       };
-      console.log("variables", variables);
       const { data } = await signIn({
         variables: variables,
       });
-      console.log("data", data);
       const {
         userLogin: { token, user },
       } = data;
-      console.log("token", token);
-      console.log("user", user);
       if (data.userLogin.token) {
         localStorage.setItem("user-token", data.userLogin.token);
         localStorage.setItem("user", JSON.stringify(data.userLogin.user));
@@ -175,6 +192,7 @@ const SignInCard = ({
       }
       if (user) {
         setUser(user);
+        toggleUserLogin();
       } else {
         console.log("Opps, No user found!");
       }
@@ -214,9 +232,8 @@ const SignInCard = ({
               </Text>
               <Button
                 onClick={() => {
-                  console.log("im not working...");
+                  signOut();
                 }}
-                accessibilityLabel="Sign Out"
                 icon={ExitIcon}
               ></Button>
             </InlineGrid>
