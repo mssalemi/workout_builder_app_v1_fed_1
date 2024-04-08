@@ -2,7 +2,14 @@ import React from "react";
 
 import { DescriptionList, Grid, Text } from "@shopify/polaris";
 
-export function WorkoutProgramDisplay() {
+import type { WorkoutProgramType } from "../../UserWorkoutProgramManager/UserWorkoutProgramManager";
+
+export function WorkoutProgramDisplay({
+  workoutProgram,
+}: {
+  workoutProgram: WorkoutProgramType;
+}) {
+  console.log("<WorkoutProgramDisplay /> workoutProgram -> ", workoutProgram);
   return (
     <>
       <WeekDisplay />
@@ -37,44 +44,51 @@ const WeekDisplay = () => {
 
 const WorkoutDescription = () => {
   return (
-    <Grid>
-      <Grid.Cell columnSpan={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
-        <div
-          style={{
-            height: "100%",
-            border: "1px solid #dfe3e8",
-            padding: "0.5rem",
-          }}
-        >
-          <p>3x5 Bench Press</p>
-          <p>3x10 Lat Pulldown</p>
-        </div>
-      </Grid.Cell>
-      <Grid.Cell columnSpan={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
-        <div
-          style={{
-            height: "100%",
-            border: "1px solid #dfe3e8",
-            padding: "0.5rem",
-          }}
-        >
-          <p>3x8 Leg Press</p>
-          <p>3x12 Hamstring Curl</p>
-          <p>3x8 Lunges</p>
-        </div>
-      </Grid.Cell>
-      <Grid.Cell columnSpan={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
-        <div
-          style={{
-            height: "100%",
-            border: "1px solid #dfe3e8",
-            padding: "0.5rem",
-          }}
-        >
-          <p>3x5 Bench Press</p>
-          <p>3x10 Lat Pulldown</p>
-        </div>
-      </Grid.Cell>
-    </Grid>
+    <div
+      style={{
+        border: "3px solid red",
+      }}
+    >
+      {" "}
+      <Grid>
+        <Grid.Cell columnSpan={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
+          <div
+            style={{
+              height: "100%",
+              border: "1px solid #dfe3e8",
+              padding: "0.5rem",
+            }}
+          >
+            <p>3x5 Bench Press</p>
+            <p>3x10 Lat Pulldown</p>
+          </div>
+        </Grid.Cell>
+        <Grid.Cell columnSpan={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
+          <div
+            style={{
+              height: "100%",
+              border: "1px solid #dfe3e8",
+              padding: "0.5rem",
+            }}
+          >
+            <p>3x8 Leg Press</p>
+            <p>3x12 Hamstring Curl</p>
+            <p>3x8 Lunges</p>
+          </div>
+        </Grid.Cell>
+        <Grid.Cell columnSpan={{ xs: 6, sm: 4, md: 4, lg: 4, xl: 4 }}>
+          <div
+            style={{
+              height: "100%",
+              border: "1px solid #dfe3e8",
+              padding: "0.5rem",
+            }}
+          >
+            <p>3x5 Bench Press</p>
+            <p>3x10 Lat Pulldown</p>
+          </div>
+        </Grid.Cell>
+      </Grid>
+    </div>
   );
 };

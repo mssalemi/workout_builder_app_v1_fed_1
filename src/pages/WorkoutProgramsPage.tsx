@@ -96,7 +96,7 @@ function WorkoutProgramsPage() {
   };
 
   useEffect(() => {
-    console.log("[WorkoutProgramV2] Global User State", state);
+    // console.log("[WorkoutProgramV2] Global User State", state);
   }, [state]);
 
   return (

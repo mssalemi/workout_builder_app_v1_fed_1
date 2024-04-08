@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import {
   Text,
@@ -13,23 +13,112 @@ import {
 } from "@shopify/polaris";
 import { HomeIcon } from "@shopify/polaris-icons";
 
+import { useQuery, gql } from "@apollo/client";
+
 import { WorkoutProgramCardDisplay } from "../WorkoutProgramCardDisplay/WorkoutProgramCardDisplay";
 
+const FIND_USER_WORKOUT_PROGRAMS = gql`
+  query FindWorkoutProgramsByUser {
+    findWorkoutProgramsByUser {
+      id
+      userId
+      title
+      description
+      difficultyLevel
+      weeks {
+        workoutProgramId
+        order
+        workouts {
+          title
+          exercises {
+            performanceData {
+              reps
+              weight
+              sets
+            }
+            exercise {
+              title
+            }
+            userId
+          }
+        }
+      }
+    }
+  }
+`;
+
+export interface WorkoutProgramType {
+  id: string;
+  title: string;
+  userId: string;
+  description: string;
+  difficultyLevel: string;
+  weeks: any[];
+}
+
 function UserWorkoutProgramManager() {
-  // selected = value
-  const items = [
+  const { loading, error, data, refetch } = useQuery(
+    FIND_USER_WORKOUT_PROGRAMS,
     {
-      id: "program-1",
-      title: "Example Program 1",
-      author: "Mehdi Salemi",
-    },
-  ];
+      variables: {},
+    }
+  );
+
+  const workoutPrograms = useMemo(
+    () =>
+      data?.findWorkoutProgramsByUser?.map(
+        ({
+          id,
+          title,
+          userId,
+          description,
+          difficultyLevel,
+          weeks,
+        }: WorkoutProgramType) => {
+          return {
+            id,
+            title,
+            userId,
+            description,
+            difficultyLevel,
+            weeks,
+          };
+        }
+      ),
+    [data]
+  );
 
   const [selected, setSelected] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    console.log("Selected:", selected);
+    // console.log("Selected:", selected);
   }, [selected]);
+
+  const items = workoutPrograms
+    ? workoutPrograms.map(
+        ({
+          id,
+          title,
+          userId,
+          description,
+          difficultyLevel,
+          weeks,
+        }: {
+          id: string;
+          title: string;
+          userId: string;
+          description: string;
+          difficultyLevel: string;
+          weeks: any[];
+        }) => {
+          return {
+            id,
+            title,
+            author: "MedxMan",
+          };
+        }
+      )
+    : [];
 
   return (
     <div
@@ -74,6 +163,7 @@ function UserWorkoutProgramManager() {
             <ResourceList
               resourceName={{ singular: "customer", plural: "customers" }}
               items={items}
+              loading={loading}
               renderItem={(item) => {
                 const { id, author, title } = item;
                 const media = <Avatar customer size="md" name={author} />;
@@ -83,7 +173,6 @@ function UserWorkoutProgramManager() {
                     id={id}
                     url={""}
                     onClick={(value) => {
-                      console.log("I got Clicked", value);
                       setSelected(value);
                     }}
                     media={media}
@@ -98,7 +187,13 @@ function UserWorkoutProgramManager() {
               }}
             />
           )}
-          {selected && <WorkoutProgramCardDisplay />}
+          {selected && (
+            <WorkoutProgramCardDisplay
+              workoutProgram={workoutPrograms.find(
+                (program: WorkoutProgramType) => program.id === selected
+              )}
+            />
+          )}
         </BlockStack>
       </Card>
     </div>

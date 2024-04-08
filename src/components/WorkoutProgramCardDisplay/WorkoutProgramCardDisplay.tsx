@@ -2,9 +2,13 @@ import React from "react";
 import { Banner, Text, Link } from "@shopify/polaris";
 import { WorkoutProgramDisplay } from "./components/WorkoutProgramDisplay";
 
-interface Props {}
+import type { WorkoutProgramType } from "../UserWorkoutProgramManager/UserWorkoutProgramManager";
 
-export function WorkoutProgramCardDisplay() {
+interface Props {
+  workoutProgram: WorkoutProgramType;
+}
+
+export function WorkoutProgramCardDisplay({ workoutProgram }: Props) {
   return (
     <>
       {" "}
@@ -14,7 +18,7 @@ export function WorkoutProgramCardDisplay() {
       <Text variant="headingXs" as="p">
         Mehdi Salemi
       </Text>
-      <WorkoutProgramDisplay />
+      <WorkoutProgramDisplay workoutProgram={workoutProgram} />
       <Banner>
         <Link url="/v2/66">Edit workout program</Link>
       </Banner>
