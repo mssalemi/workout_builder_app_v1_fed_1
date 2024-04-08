@@ -47,6 +47,7 @@ const WorkoutDescription = () => {
     <div
       style={{
         border: "3px solid red",
+        padding: "0.5rem",
       }}
     >
       {" "}
