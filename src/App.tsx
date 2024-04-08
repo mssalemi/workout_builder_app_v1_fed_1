@@ -123,6 +123,7 @@ export const V2PageContent = () => {
         >
           <Routes>
             <Route path="/" element={<WorkoutProgramsPage />} />
+            <Route path="/:id" element={<WorkoutPage />} />
           </Routes>
         </Col>
       </Col>
