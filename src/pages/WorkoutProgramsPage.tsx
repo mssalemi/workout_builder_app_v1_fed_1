@@ -100,7 +100,7 @@ function WorkoutProgramsPage() {
   }, [state]);
 
   return (
-    <Page title="WorkoutProgram Manager">
+    <Page title="Workout Program Manager">
       <Layout>
         <Layout.Section>
           <SignInCard
@@ -226,7 +226,7 @@ const SignInCard = ({
         <>
           <BlockStack gap="200">
             <InlineGrid columns="1fr auto">
-              <Text as="h2">
+              <Text as="h2" variant="headingMd">
                 Greetings, {user.name} - You are signed in!
                 {user.email}
               </Text>
@@ -248,14 +248,11 @@ const SignInCard = ({
               <TextField
                 value={userId}
                 onChange={handleUserIdChange}
-                label="Email"
+                label="User ID"
                 type="number"
-                autoComplete="email"
+                autoComplete="number"
                 helpText={
-                  <span>
-                    We’ll use this email address to inform you on future changes
-                    to Polaris.
-                  </span>
+                  <span>We’ll use this user id to inform to login.</span>
                 }
               />
               <TextField
