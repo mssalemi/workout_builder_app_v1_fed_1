@@ -176,12 +176,14 @@ const SignInCard = ({
           password: password,
         },
       };
+      console.log("Variables", variables);
       const { data } = await signIn({
         variables: variables,
       });
       const {
         userLogin: { token, user },
       } = data;
+      console.log(data);
       if (data.userLogin.token) {
         localStorage.setItem("user-token", data.userLogin.token);
         localStorage.setItem("user", JSON.stringify(data.userLogin.user));

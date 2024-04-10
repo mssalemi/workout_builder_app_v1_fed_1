@@ -11,19 +11,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableFooter from "@mui/material/TableFooter";
 import Paper from "@mui/material/Paper";
-import { experimentalStyled as styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Unstable_Grid2";
 import type { WorkoutProgramType } from "../../UserWorkoutProgramManager/UserWorkoutProgramManager";
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(2),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
 
 export function WorkoutProgramDisplay({
   workoutProgram,
@@ -131,9 +122,7 @@ const WeeklyWorkoutDisplay = ({ week }: { week: Week }) => {
               )}
             </TableBody>
             <TableFooter>
-              <Link href={`/v2/${workout.id}`} variant="body2">
-                {"Edit Workout"}
-              </Link>
+              <EditWorkoutComponent workout={workout} />
             </TableFooter>
           </Table>
         </TableContainer>
@@ -147,6 +136,20 @@ const WeeklyWorkoutDisplay = ({ week }: { week: Week }) => {
         {dailyWorkoutsMarkup}
       </Grid>
     </Box>
+  );
+};
+
+interface EditWorkoutComponentProps {
+  workout: Workout;
+}
+
+const EditWorkoutComponent = ({ workout }: EditWorkoutComponentProps) => {
+  return (
+    <>
+      <Link href={`/v2/${workout.id}`} variant="body2">
+        {"Edit Workout"}
+      </Link>
+    </>
   );
 };
 
