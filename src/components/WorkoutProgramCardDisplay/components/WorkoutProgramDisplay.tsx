@@ -9,9 +9,11 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import TableFooter from "@mui/material/TableFooter";
 import Paper from "@mui/material/Paper";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
 import Grid from "@mui/material/Unstable_Grid2";
 import type { WorkoutProgramType } from "../../UserWorkoutProgramManager/UserWorkoutProgramManager";
 
@@ -97,7 +99,7 @@ const WeeklyWorkoutDisplay = ({ week }: { week: Week }) => {
           {workout.title}
         </Typography>
         <TableContainer component={Paper}>
-          <Table aria-label="simple table">
+          <Table size="small" aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>Exercise</TableCell>
@@ -128,6 +130,11 @@ const WeeklyWorkoutDisplay = ({ week }: { week: Week }) => {
                 </TableRow>
               )}
             </TableBody>
+            <TableFooter>
+              <Link href={`/v2/${workout.id}`} variant="body2">
+                {"Edit Workout"}
+              </Link>
+            </TableFooter>
           </Table>
         </TableContainer>
       </Grid>
@@ -146,6 +153,7 @@ const WeeklyWorkoutDisplay = ({ week }: { week: Week }) => {
 interface Workout {
   exercises: Exercise[];
   title: string;
+  id: number;
 }
 
 interface Week {

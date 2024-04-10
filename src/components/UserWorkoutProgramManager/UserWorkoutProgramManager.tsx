@@ -29,6 +29,7 @@ const FIND_USER_WORKOUT_PROGRAMS = gql`
         workoutProgramId
         order
         workouts {
+          id
           title
           exercises {
             performanceData {
