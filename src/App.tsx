@@ -57,7 +57,7 @@ function App() {
             }}
           >
             <Routes>
-              <Route path="/" element={<V1PageContent />} />
+              <Route path="/v1/*" element={<V1PageContent />} />
               <Route path="/v2/*" element={<V2PageContent />} />
             </Routes>
           </Col>
