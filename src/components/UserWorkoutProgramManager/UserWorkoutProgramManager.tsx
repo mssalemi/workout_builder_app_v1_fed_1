@@ -2,20 +2,38 @@ import React, { useState, useEffect, useMemo } from "react";
 
 import {
   Text,
-  Box,
+  Box as PolarisBox,
   Card,
   BlockStack,
   InlineGrid,
   ResourceList,
   ResourceItem,
   Avatar,
-  Button,
+  Button as PolarisButton,
 } from "@shopify/polaris";
 import { HomeIcon } from "@shopify/polaris-icons";
 
 import { useQuery, gql } from "@apollo/client";
 
 import { WorkoutProgramCardDisplay } from "../WorkoutProgramCardDisplay/WorkoutProgramCardDisplay";
+import { CreateWorkoutProgramForm } from "../master/CreateWorkoutProgramForm";
+
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 const FIND_USER_WORKOUT_PROGRAMS = gql`
   query FindWorkoutProgramsByUser {
@@ -133,11 +151,11 @@ function UserWorkoutProgramManager() {
         <Text as="h2" variant="headingSm">
           Dashboard
         </Text>
-        <Box paddingBlock="200">
+        <PolarisBox paddingBlock="200">
           <Text as="p" variant="bodyMd">
             View a summary of your recent workouts stats!
           </Text>
-        </Box>
+        </PolarisBox>
       </Card>
 
       <Card roundedAbove="sm">
@@ -146,7 +164,7 @@ function UserWorkoutProgramManager() {
             <Text as="h2" variant="headingSm">
               Workout Programs
             </Text>
-            <Button
+            <PolarisButton
               onClick={() => {
                 setSelected(undefined);
               }}
@@ -155,11 +173,11 @@ function UserWorkoutProgramManager() {
               disabled={!selected}
             />
           </InlineGrid>
-          <Box>
+          <PolarisBox>
             <Text as="p" variant="bodyMd">
               View a list of all your available workout programs!
             </Text>
-          </Box>
+          </PolarisBox>
           {!selected && (
             <ResourceList
               resourceName={{ singular: "customer", plural: "customers" }}
@@ -196,9 +214,34 @@ function UserWorkoutProgramManager() {
             />
           )}
         </BlockStack>
+        <AddNewWorkoutProgramForm />
       </Card>
     </div>
   );
 }
+
+const AddNewWorkoutProgramForm = () => {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  return (
+    <Box paddingBlock="200">
+      <PolarisButton onClick={handleOpen}>
+        Add New Workout Program
+      </PolarisButton>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <CreateWorkoutProgramForm />
+        </Box>
+      </Modal>
+    </Box>
+  );
+};
 
 export default UserWorkoutProgramManager;
