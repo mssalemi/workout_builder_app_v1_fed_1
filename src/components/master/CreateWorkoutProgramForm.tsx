@@ -13,7 +13,7 @@ import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 
 import { gql, useMutation } from "@apollo/client";
 
-import { styled } from "@mui/material/styles";
+// FIX ME
 
 const CREATE_WORKOUT_PROGRAM_MUTATION = gql`
   mutation CreateWorkoutProgram($input: CreateWorkoutProgramInput!) {
@@ -56,9 +56,10 @@ export function CreateWorkoutProgramForm() {
       },
     };
     console.log("Variables", variables);
-    // const { data } = await createWorkoutProgram({
-    //   variables: variables,
-    // });
+    const { data } = await createWorkoutProgram({
+      variables: variables,
+    });
+    console.log("Data", data);
   };
 
   return (
