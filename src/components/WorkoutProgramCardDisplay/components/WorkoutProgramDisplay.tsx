@@ -34,8 +34,9 @@ export function WorkoutProgramDisplay({
     id: string;
     content: string;
     panelID: string;
-    week: Week;
+    week: Week | undefined;
   }[] = workoutProgram.weeks.map((week, index) => {
+    console.log("week", week);
     return {
       id: `week-${index}`,
       content: `Week ${index + 1}`,
@@ -47,7 +48,7 @@ export function WorkoutProgramDisplay({
   return (
     <>
       <Tabs tabs={tabsByWeek} selected={selected} onSelect={handleTabChange}>
-        <WeeklyWorkoutDisplay week={tabsByWeek[selected].week} />
+        <WeeklyWorkoutDisplay week={tabsByWeek[selected]?.week} />
       </Tabs>
     </>
   );
@@ -74,12 +75,12 @@ function createWorkoutTableData(
   };
 }
 
-const WeeklyWorkoutDisplay = ({ week }: { week: Week }) => {
+const WeeklyWorkoutDisplay = ({ week }: { week: Week | undefined }) => {
   console.log(week);
-  console.log(week.workouts);
+  console.log(week?.workouts);
 
   // this is an array of tables
-  const dailyWorkoutsMarkup = week.workouts.map((workout) => {
+  const dailyWorkoutsMarkup = week?.workouts.map((workout) => {
     const tableData = workout.exercises.map((exercise) =>
       createWorkoutTableData(exercise, workout.title)
     );

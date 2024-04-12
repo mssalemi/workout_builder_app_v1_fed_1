@@ -113,7 +113,7 @@ function UserWorkoutProgramManager() {
     // console.log("Selected:", selected);
   }, [selected]);
 
-  const items = workoutPrograms
+  const items = workoutPrograms?.length
     ? workoutPrograms.map(
         ({
           id,

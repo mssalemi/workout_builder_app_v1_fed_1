@@ -18,18 +18,12 @@ import { gql, useMutation } from "@apollo/client";
 const CREATE_WORKOUT_PROGRAM_MUTATION = gql`
   mutation CreateWorkoutProgram($input: CreateWorkoutProgramInput!) {
     createWorkoutProgram(input: $input) {
-      workoutProgram {
-        id
-        title
-        description
-        difficultyLevel
-        durationWeeks
-        user {
-          id
-        }
-      }
-      success
-      errors
+      id
+      title
+      description
+      difficultyLevel
+      durationWeeks
+      createdAt
     }
   }
 `;
