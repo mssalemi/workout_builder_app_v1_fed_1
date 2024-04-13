@@ -13,6 +13,8 @@ import {
 } from "@shopify/polaris";
 import { HomeIcon } from "@shopify/polaris-icons";
 
+import { FriendsWorkoutsCard } from "./components/FriendsWorkoutsCard";
+
 import { useQuery, gql } from "@apollo/client";
 
 import { WorkoutProgramCardDisplay } from "../WorkoutProgramCardDisplay/WorkoutProgramCardDisplay";
@@ -216,6 +218,8 @@ function UserWorkoutProgramManager() {
         </BlockStack>
         <AddNewWorkoutProgramForm />
       </Card>
+
+      <FriendsWorkoutsCard />
     </div>
   );
 }
