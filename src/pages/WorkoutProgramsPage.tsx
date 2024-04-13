@@ -14,6 +14,7 @@ import {
   Spinner,
   Grid,
   Layout,
+  Banner,
 } from "@shopify/polaris";
 import { ExitIcon } from "@shopify/polaris-icons";
 
@@ -100,8 +101,11 @@ function WorkoutProgramsPage() {
   }, [state]);
 
   return (
-    <Page title="Workout Program Manager">
+    <Page title="Workout Program Manager v1">
       <Layout>
+        <Layout.Section>
+          <Banner title="This app is in development" tone="info"></Banner>
+        </Layout.Section>
         <Layout.Section>
           <SignInCard
             user={state.user}
